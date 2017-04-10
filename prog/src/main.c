@@ -25,10 +25,10 @@
 /* maximal number of chars per line on lcd */
 #define LCD_STRING_LENGTH   (LCD_HOR_RESOLUTION / FONT_MIN_WIDTH)
 
-/* ID to send from */
+/* ID for messages from board 1 */
 #define TX_ID 0x666
 
-/* ID to recieve from */
+/* ID for messages from borad 2 */
 #define RX_ID 0x555
 
 static __IO uint32_t TimingDelay;
@@ -54,7 +54,7 @@ void init_gpio(void)
     GPIO_Init(GPIOA, &g);
 }
 
-/* make a delay with the frequency of the systick */
+/* Delay using systick */
 void Delay(__IO uint32_t nTime)
 {
     TimingDelay = nTime;
@@ -75,19 +75,20 @@ void setup_acceptance_filter()
     /* set the SJA1000 chip in running mode */
      CARME_CAN_SetMode(CARME_CAN_DF_RESET);
 
-    /*Acceptance Filter*/
+    /* Acceptance Filter */
     af.afm = MODE_SINGLE;   /* Single filter */
 
     /* unmask the important bits by setting them to Zero */
-    af.amr[0] = 0x00;       /* unmask bit 0 - 7                             */
-    af.amr[1] = 0x1f;       /* unmask bit 8 - 6                             */
-    af.amr[2] = 0xff;       /* don't care in Mode with normal id length     */
-    af.amr[3] = 0xff;       /* don't care in Mode with normal id length     */
+    af.amr[0] = 0x00; /* unmask bit 0 - 7                         */
+    af.amr[1] = 0x1f; /* unmask bit 8 - 6                         */
+    af.amr[2] = 0xff; /* don't care in Mode with normal id length */
+    af.amr[3] = 0xff; /* don't care in Mode with normal id length */
+
     /* set the bits which have to be high */
-    af.acr[0] = 0xAA;       /* 11001100                                     */
-    af.acr[1] = 0xA0;       /* 11000000                                     */
-    af.acr[2] = 0x00;       /* don't care in Mode with normal id length     */
-    af.acr[3] = 0x00;       /* don't care in Mode with normal id length     */
+    af.acr[0] = 0xAA; /* 11001100                                 */
+    af.acr[1] = 0xA0; /* 11000000                                 */
+    af.acr[2] = 0x00; /* don't care in Mode with normal id length */
+    af.acr[3] = 0x00; /* don't care in Mode with normal id length */
     
     /* set the AF */
     CARME_CAN_SetAcceptaceFilter(&af);
@@ -100,9 +101,9 @@ void setup_acceptance_filter()
 int main(void)
 {
     /* local variables */
-    CARME_CAN_MESSAGE rxMsg;            // rxMsg object
-    CARME_CAN_MESSAGE txMsg;            // txMsg object
-    char LCDmsg[LCD_STRING_LENGTH];     // LCD String
+    CARME_CAN_MESSAGE rxMsg; // rxMsg object
+    CARME_CAN_MESSAGE txMsg; // txMsg object
+    char LCDmsg[LCD_STRING_LENGTH]; // LCD String
 
     /* Default value for LEDs */
     *LED = 0b10101010;
@@ -139,10 +140,10 @@ int main(void)
         /* --------------------------------------- Read switches and send value */
 
         /* Setup basic CAN message */
-        txMsg.id = TX_ID;  // Your ID
-        txMsg.rtr = 0;     // Something 
-        txMsg.ext = 0;     // Something
-        txMsg.dlc = 1;     // Send 1byte
+        txMsg.id = TX_ID; // Your ID
+        txMsg.rtr = 0; // Something 
+        txMsg.ext = 0; // Something
+        txMsg.dlc = 1; // Send 1byte
         
         /* read switches */
         switches = *SWITCH;
